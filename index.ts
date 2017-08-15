@@ -6,7 +6,7 @@ import * as path from 'path';
 
 export const load = (jumpFm: JumpFm) => {
     const bind = jumpFm.bindKeys
-    const opn = jumpFm.opn
+    const shell = jumpFm.electron.shell
     const activePan = jumpFm.getActivePanel
 
     const step = (d, select = false) => {
@@ -44,7 +44,7 @@ export const load = (jumpFm: JumpFm) => {
 
     bind('selectAll', ['ctrl+a'], () => activePan().selectAll()).filterMode()
     bind('deselectAll', ['esc'], () => {
-        activePan().model.filter = ''
+        activePan().filter('')
         activePan().deselectAll()
     }).filterMode([])
     bind('toggleSelection', ['space'], () => activePan().toggleSel()).filterMode([])
@@ -54,10 +54,13 @@ export const load = (jumpFm: JumpFm) => {
         const pan = activePan()
         const path = pan.getCurItem().path
         if (fs.statSync(path).isDirectory()) pan.cd(path)
-        else opn(path)
+        else shell.openItem(path)
     }
 
-    bind('enter', ['enter'], enter).filterMode()
+    bind('enter', ['enter'], enter).filterMode(['enter'], () => {
+        enter()
+        activePan().filter('')
+    })
 
     bind('back', ['backspace'], () => {
         const pan = activePan()
@@ -71,7 +74,7 @@ export const load = (jumpFm: JumpFm) => {
     bind('openFilter', ['f'], () => activePan().view.showFilter())
     bind('likeThis', ['l'], () => {
         const pan = activePan()
-        pan.model.filter = path.extname(pan.getCurItem().path)
+        pan.filter(path.extname(pan.getCurItem().path))
     }).filterMode([])
     bind('swapPanels', ['s'], jumpFm.swapPanels).filterMode([])
 
