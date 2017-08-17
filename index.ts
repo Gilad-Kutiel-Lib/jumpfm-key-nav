@@ -53,14 +53,14 @@ export const load = (jumpFm: JumpFm) => {
     const enter = () => {
         const pan = activePan()
         const path = pan.getCurItem().path
-        if (fs.statSync(path).isDirectory()) pan.cd(path)
+        if (fs.statSync(path).isDirectory()) {
+            activePan().filter('')
+            pan.cd(path)
+        }
         else shell.openItem(path)
     }
 
-    bind('enter', ['enter'], enter).filterMode(['enter'], () => {
-        enter()
-        activePan().filter('')
-    })
+    bind('enter', ['enter'], enter).filterMode()
 
     bind('back', ['backspace'], () => {
         const pan = activePan()
