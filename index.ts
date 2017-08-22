@@ -12,30 +12,27 @@ export const load = (jumpFm: JumpFm) => {
     const step = (d, select = false) => {
         const pan = activePan()
         pan.step(d, select)
-        setImmediate(() => pan.view.scroll(pan.getCur()))
     }
 
-    const rowCountInPage = activePan().view.getRowCountInPage
 
     bind('switchPanel', ['tab'], jumpFm.switchPanel).filterMode(['tab'], () => {
-        jumpFm.getActivePanel().view.hideFilter()
         jumpFm.switchPanel()
     })
 
     bind('up', ['up', ']'], () => step(-1)).filterMode()
     bind('upSelect', ['shift+up', 'shift+]'], () => step(-1, true)).filterMode()
-    bind('pageUp', ['pageup', 'ctrl+]'], () => step(-rowCountInPage()))
-        .filterMode()
-    bind('pageUpSelect', ['shift+pageup', 'shift+ctrl+]'],
-        () => step(-rowCountInPage(), true)).filterMode()
+    // bind('pageUp', ['pageup', 'ctrl+]'], () => step(-rowCountInPage()))
+    //     .filterMode()
+    // bind('pageUpSelect', ['shift+pageup', 'shift+ctrl+]'],
+    //     () => step(-rowCountInPage(), true)).filterMode()
 
     bind('down', ['down', '['], () => step(1))
         .filterMode()
     bind('downSelect', ['shift+down', 'shift+['], () => step(1, true)).filterMode()
-    bind('pageDown', ['pagedown', 'ctrl+['], () => step(rowCountInPage()))
-        .filterMode()
-    bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
-        () => step(rowCountInPage(), true)).filterMode()
+    // bind('pageDown', ['pagedown', 'ctrl+['], () => step(rowCountInPage()))
+    //     .filterMode()
+    // bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
+    //     () => step(rowCountInPage(), true)).filterMode()
 
     bind('goStart', ['home'], () => step(-9999)).filterMode([])
     bind('goStartSelect', ['shift+home'], () => step(-9999, true)).filterMode([])
@@ -47,8 +44,8 @@ export const load = (jumpFm: JumpFm) => {
         activePan().filter('')
         activePan().deselectAll()
     }).filterMode([])
-    bind('toggleSelection', ['space'], () => activePan().toggleSel()).filterMode([])
-    bind('hide').filterMode(['esc'], () => activePan().view.hideFilter())
+    bind('toggleSelection', ['space'], () => activePan().toggleCurSel()).filterMode([])
+    bind('hide').filterMode(['esc'], () => activePan().filterHide())
 
     const enter = () => {
         const pan = activePan()
@@ -71,7 +68,7 @@ export const load = (jumpFm: JumpFm) => {
         activePan().cd(homedir())
     }).filterMode([])
 
-    bind('openFilter', ['f'], () => activePan().view.showFilter())
+    bind('openFilter', ['f'], () => activePan().filterShow())
     bind('likeThis', ['l'], () => {
         const pan = activePan()
         pan.filter(path.extname(pan.getCurItem().path))
