@@ -41,17 +41,17 @@ export const load = (jumpFm: JumpFm) => {
 
     bind('selectAll', ['ctrl+a'], () => activePan().selectAll()).filterMode()
     bind('deselectAll', ['esc'], () => {
-        activePan().filter('')
+        activePan().filter.set('')
         activePan().deselectAll()
     }).filterMode([])
     bind('toggleSelection', ['space'], () => activePan().toggleCurSel()).filterMode([])
-    bind('hide').filterMode(['esc'], () => activePan().filterHide())
+    bind('hide').filterMode(['esc'], () => activePan().filter.hide())
 
     const enter = () => {
         const pan = activePan()
         const path = pan.getCurItem().path
         if (fs.statSync(path).isDirectory()) {
-            activePan().filter('')
+            activePan().filter.set('')
             pan.cd(path)
         }
         else shell.openItem(path)
@@ -68,10 +68,10 @@ export const load = (jumpFm: JumpFm) => {
         activePan().cd(homedir())
     }).filterMode([])
 
-    bind('openFilter', ['f'], () => activePan().filterShow())
+    bind('openFilter', ['f'], () => activePan().filter.focus())
     bind('likeThis', ['l'], () => {
         const pan = activePan()
-        pan.filter(path.extname(pan.getCurItem().path))
+        pan.filter.set(path.extname(pan.getCurItem().path))
     }).filterMode([])
     bind('swapPanels', ['s'], jumpFm.swapPanels).filterMode([])
 
