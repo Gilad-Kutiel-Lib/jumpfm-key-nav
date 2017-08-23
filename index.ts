@@ -23,22 +23,45 @@ export const load = (jumpFm: JumpFm) => {
         panel.bind('down', ['down', '['], () =>
             panel.step(1)
         )
+
+        panel.bind('downSelect', ['shift+down', 'shift+['], () =>
+            panel.step(1, true)
+        )
+
+        panel.bind('pageUp', ['pageup', 'ctrl+]'], () =>
+            panel.stepPgUp()
+        )
+
+        panel.bind('pageUpSelect', ['shift+pageup', 'shift+ctrl+]'], () =>
+            panel.stepPgUp(true)
+        )
+
+        panel.bind('pageDown', ['pagedown', 'ctrl+['], () =>
+            panel.stepPgDown()
+        )
+
+        panel.bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
+            () => panel.stepPgDown(true)
+        )
+
+        panel.bind('goStart', ['home'], () =>
+            panel.stepStart()
+        )
+
+        panel.bind('goStartSelect', ['shift+home'], () =>
+            panel.stepStart(true)
+        )
+
+        panel.bind('goEnd', ['end'], () =>
+            panel.stepEnd()
+        )
+
+        panel.bind('goEndSelect', ['shift+end'], () =>
+            panel.stepEnd(true)
+        )
     })
-    // bind('pageUp', ['pageup', 'ctrl+]'], () => step(-rowCountInPage()))
-    //     .filterMode()
-    // bind('pageUpSelect', ['shift+pageup', 'shift+ctrl+]'],
-    //     () => step(-rowCountInPage(), true)).filterMode()
 
-    // bind('downSelect', ['shift+down', 'shift+['], () => step(1, true)).filterMode()
-    // bind('pageDown', ['pagedown', 'ctrl+['], () => step(rowCountInPage()))
-    //     .filterMode()
-    // bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
-    //     () => step(rowCountInPage(), true)).filterMode()
 
-    // bind('goStart', ['home'], () => step(-9999)).filterMode([])
-    // bind('goStartSelect', ['shift+home'], () => step(-9999, true)).filterMode([])
-    // bind('goEnd', ['end'], () => step(9999)).filterMode([])
-    // bind('goEndSelect', ['shift+end'], () => step(9999, true)).filterMode([])
 
     // bind('selectAll', ['ctrl+a'], () => activePan().selectAll()).filterMode()
     // bind('deselectAll', ['esc'], () => {
