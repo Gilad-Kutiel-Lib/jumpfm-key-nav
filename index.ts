@@ -12,33 +12,81 @@ export const load = (jumpFm: JumpFm) => {
     bind('switchPanel', ['tab'], jumpFm.panelsSwitch)
 
     panels.forEach(panel => {
-        panel.bind('up', ['up', ']'], () =>
-            panel.step(-1)
+        // TODO move to filter plugin ?
+        panel.bind('showFilter', ['f'], () =>
+            panel.filterBox.focus()
         )
 
-        panel.bind('upSelect', ['shift+up', 'shift+]'], () =>
-            panel.step(-1, true)
-        )
+        panel.filterBox.bind('hideFilter', ['esc'], panel.filterBox.hide)
+        // /TODO move to filter plugin ?
 
-        panel.bind('down', ['down', '['], () =>
-            panel.step(1)
-        )
+        panel.filterBox.bind('switchPanel', ['tab'], () => {
+            panel.filterBox.hide()
+            jumpFm.panelsSwitch()
+        })
 
-        panel.bind('downSelect', ['shift+down', 'shift+['], () =>
-            panel.step(1, true)
-        )
+        // UP
+        const up = [
+            'up'
+            , ['up', ']']
+            , () => panel.step(-1)
+        ]
+        panel.bind.apply(null, up)
+        panel.filterBox.bind.apply(null, up)
 
-        panel.bind('pageUp', ['pageup', 'ctrl+]'], () =>
-            panel.stepPgUp()
-        )
+        // UP SELECT
+        const upSelect = [
+            'upSelect'
+            , ['shift+up', 'shift+]']
+            , () => panel.step(-1, true)
+        ]
+        panel.bind.apply(null, upSelect)
+        panel.filterBox.bind.apply(null, upSelect)
 
-        panel.bind('pageUpSelect', ['shift+pageup', 'shift+ctrl+]'], () =>
-            panel.stepPgUp(true)
-        )
+        // DOWN
+        const down = [
+            'down'
+            , ['down', '[']
+            , () => panel.step(1)
+        ]
+        panel.bind.apply(null, down)
+        panel.filterBox.bind.apply(null, down)
 
-        panel.bind('pageDown', ['pagedown', 'ctrl+['], () =>
-            panel.stepPgDown()
-        )
+        // DOWN SELECT
+        const downSelect = [
+            'downSelect'
+            , ['shift+down', 'shift+[']
+            , () => panel.step(1, true)
+        ]
+        panel.bind.apply(null, downSelect)
+        panel.filterBox.bind.apply(null, downSelect)
+
+        // PAGE UP
+        const pgUp = [
+            'pageUp'
+            , ['pageup', 'ctrl+]']
+            , () => panel.stepPgUp()
+        ]
+        panel.bind.apply(null, pgUp)
+        panel.filterBox.bind.apply(null, pgUp)
+
+        // PAGE UP SELECT
+        const pgUpSelect = [
+            'pageUpSelect'
+            , ['shift+pageup', 'shift+ctrl+]']
+            , () => panel.stepPgUp(true)
+        ]
+        panel.bind.apply(pgUpSelect)
+        panel.filterBox.bind.apply(null, pgUpSelect)
+
+        // PAGE DOWN
+        const pgDown = [
+            'pageDown'
+            , ['pagedown', 'ctrl+[']
+            , () => panel.stepPgDown()
+        ]
+        panel.bind.apply(null, pgDown)
+        panel.filterBox.bind.apply(null, pgDown)
 
         panel.bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
             () => panel.stepPgDown(true)
