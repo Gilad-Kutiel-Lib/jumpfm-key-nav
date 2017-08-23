@@ -11,6 +11,33 @@ export const load = (jumpFm: JumpFm) => {
 
     bind('switchPanel', ['tab'], jumpFm.panelsSwitch)
 
+    // OPEN TO
+    const openTo = (source: Panel, dist: Panel) => {
+        const item = source.getCurrentItem()
+        dist.cd(
+            fs.statSync(item.path).isDirectory() ?
+                item.path :
+                source.getUrl().path
+        )
+    }
+
+    bind('openToRight', ['ctrl+right'], () =>
+        openTo(
+            jumpFm.panels[0],
+            jumpFm.panels[1],
+        )
+    )
+
+    bind('openToLeft', ['ctrl+left'], () =>
+        openTo(
+            jumpFm.panels[1],
+            jumpFm.panels[0],
+        )
+    )
+
+    // SWAP PANELS
+    bind('swapPanels', ['s'], jumpFm.panelsSwap)
+
     panels.forEach(panel => {
         // TODO move to filter plugin ?
         panel.bind('showFilter', ['f'], () =>
@@ -76,7 +103,7 @@ export const load = (jumpFm: JumpFm) => {
             , ['shift+pageup', 'shift+ctrl+]']
             , () => panel.stepPgUp(true)
         ]
-        panel.bind.apply(pgUpSelect)
+        panel.bind.apply(null, pgUpSelect)
         panel.filterBox.bind.apply(null, pgUpSelect)
 
         // PAGE DOWN
@@ -88,85 +115,70 @@ export const load = (jumpFm: JumpFm) => {
         panel.bind.apply(null, pgDown)
         panel.filterBox.bind.apply(null, pgDown)
 
-        panel.bind('pageDownSelect', ['shift+pagedown', 'shift+ctrl+['],
-            () => panel.stepPgDown(true)
-        )
+        // PAGE DOWN SELECT
+        const pgDownSelect = [
+            'pageDownSelect'
+            , ['shift+pagedown', 'shift+ctrl+[']
+            , () => panel.stepPgDown(true)
+        ]
+        panel.bind.apply(null, pgDownSelect)
+        panel.filterBox.bind.apply(null, pgDownSelect)
 
+        // HOME
         panel.bind('goStart', ['home'], () =>
             panel.stepStart()
         )
 
+        // HOME SELECT
         panel.bind('goStartSelect', ['shift+home'], () =>
             panel.stepStart(true)
         )
 
+        // END
         panel.bind('goEnd', ['end'], () =>
             panel.stepEnd()
         )
 
+        // END SELECT
         panel.bind('goEndSelect', ['shift+end'], () =>
             panel.stepEnd(true)
         )
+
+        // SELECT ALL
+        panel.bind('selectAll', ['ctrl+a'], () =>
+            panel.selectAll()
+        )
+
+        // SELECT NONE
+        panel.bind('deselectAll', ['esc'], () =>
+            panel.selectNone()
+        )
+
+        // TOGGLE SELECTION
+        panel.bind('toggleSelection', ['space'], () =>
+            panel.selectToggleCurrent()
+        )
+
+        // ENTER
+        const enter = () => {
+            const path = panel.getCurrentItem().path
+            if (fs.statSync(path).isDirectory()) {
+                panel.filterBox.set('')
+                panel.cd(path)
+            }
+            else shell.openItem(path)
+        }
+
+        panel.bind('enter', ['enter'], enter)
+
+        // BACK
+        panel.bind('back', ['backspace'], () => {
+            panel.cd(path.dirname(panel.getUrl().path))
+        })
+
+        // HOME DIR
+        panel.bind('homeDir', ['ctrl+home'], () => {
+            panel.cd(homedir())
+        })
     })
-
-
-
-    // bind('selectAll', ['ctrl+a'], () => activePan().selectAll()).filterMode()
-    // bind('deselectAll', ['esc'], () => {
-    //     activePan().filter.set('')
-    //     activePan().deselectAll()
-    // }).filterMode([])
-    // bind('toggleSelection', ['space'], () => activePan().toggleCurSel()).filterMode([])
-    // bind('hide').filterMode(['esc'], () => activePan().filter.hide())
-
-    // const enter = () => {
-    //     const pan = activePan()
-    //     const path = pan.getCurItem().path
-    //     if (fs.statSync(path).isDirectory()) {
-    //         activePan().filter.set('')
-    //         pan.cd(path)
-    //     }
-    //     else shell.openItem(path)
-    // }
-
-    // bind('enter', ['enter'], enter).filterMode()
-
-    // bind('back', ['backspace'], () => {
-    //     const pan = activePan()
-    //     pan.cd(path.dirname(pan.getPath()))
-    // }).filterMode([])
-
-    // bind('homeDir', ['ctrl+home'], () => {
-    //     activePan().cd(homedir())
-    // }).filterMode([])
-
-    // bind('openFilter', ['f'], () => activePan().filter.focus())
-    // bind('likeThis', ['l'], () => {
-    //     const pan = activePan()
-    //     pan.filter.set(path.extname(pan.getCurItem().path))
-    // }).filterMode([])
-    // bind('swapPanels', ['s'], jumpFm.swapPanels).filterMode([])
-
-    // const openTo = (source: Panel, dist: Panel) => {
-    //     const item = source.getCurItem()
-    //     dist.cd(
-    //         fs.statSync(item.path).isDirectory() ?
-    //             item.path :
-    //             source.getPath()
-    //     )
-    // }
-
-    // bind('openToRight', ['ctrl+right'], () =>
-    //     openTo(
-    //         jumpFm.panels[0],
-    //         jumpFm.panels[1],
-    //     )
-    // ).filterMode()
-
-    // bind('openToLeft', ['ctrl+left'], () =>
-    //     openTo(
-    //         jumpFm.panels[1],
-    //         jumpFm.panels[0],
-    //     )
-    // ).filterMode()
 }
