@@ -39,14 +39,6 @@ export const load = (jumpFm: JumpFm) => {
     bind('swapPanels', ['s'], jumpFm.panelsSwap)
 
     panels.forEach(panel => {
-        // TODO move to filter plugin ?
-        panel.bind('showFilter', ['f'], () =>
-            panel.filterBox.focus()
-        )
-
-        panel.filterBox.bind('hideFilter', ['esc'], panel.filterBox.hide)
-        // /TODO move to filter plugin ?
-
         panel.filterBox.bind('switchPanel', ['tab'], () => {
             panel.filterBox.hide()
             jumpFm.panelsSwitch()
@@ -169,7 +161,9 @@ export const load = (jumpFm: JumpFm) => {
             else shell.openItem(path)
         }
 
-        panel.bind('enter', ['enter'], enter)
+        const bindEnter = ['enter', ['enter'], enter]
+        panel.bind.apply(null, bindEnter)
+        panel.filterBox.bind.apply(null, bindEnter)
 
         // BACK
         panel.bind('back', ['backspace'], () => {
