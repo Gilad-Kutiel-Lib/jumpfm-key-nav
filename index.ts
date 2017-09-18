@@ -153,12 +153,12 @@ export const load = (jumpFm: JumpFm) => {
 
         // ENTER
         const enter = () => {
-            const path = panel.getCurrentItem().path
-            if (fs.statSync(path).isDirectory()) {
+            const item = panel.getCurrentItem()
+            if (item.isDirectory()) {
                 panel.filterBox.set('')
-                panel.cd(path)
+                panel.cd(item.path)
             }
-            else shell.openItem(path)
+            else item.open()
         }
 
         const bindEnter = ['enter', ['enter'], enter]
